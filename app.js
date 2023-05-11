@@ -21,10 +21,6 @@ app.use((error, req, res, next) => {
     .json({ message: error.message || "Unkown error accour" });
 });
 
-app.get("/", (req, res) => {
-  res.send("Working");
-});
-
 app.listen(port, () => {
   console.log(`Server is running http://localhost:${port}`);
 });

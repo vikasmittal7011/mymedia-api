@@ -57,7 +57,7 @@ const demoPlaces = [
 
 const findPlaceById = (req, res, next) => {
   let placeId = req.params.placeId;
-  let selectedPlace = demoPlaces.find((place) => place.id === placeId);
+  let selectedPlace = demoPlaces.filter((place) => place.id === placeId);
 
   if (selectedPlace.length === 0) {
     return next(
