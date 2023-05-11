@@ -57,6 +57,17 @@ let demoPlaces = [
   },
 ];
 
+const findPlace = async (req, res, next) => {
+  let allPlace;
+  try {
+    allPlace = await Place.find();
+  } catch (err) {
+    return next(new HttpError("Internal server error, try again!", 500));
+  }
+
+  res.json(allPlace);
+};
+
 const findPlaceById = (req, res, next) => {
   let placeId = req.params.placeId;
   let selectedPlace = demoPlaces.filter((place) => place.id === placeId);
@@ -139,6 +150,7 @@ const deletePlace = (req, res, next) => {
 };
 
 exports.findPlaceById = findPlaceById;
+exports.findPlace = findPlace;
 exports.findPlacesByUserId = findPlacesByUserId;
 exports.addNewPlace = addNewPlace;
 exports.updatePlace = updatePlace;
