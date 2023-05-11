@@ -124,22 +124,22 @@ const addNewPlace = async (req, res, next) => {
   res.status(201).json(newPlace);
 };
 
-const updatePlace = (req, res, next) => {
+const updatePlace = async (req, res, next) => {
   const error = validationResult(req);
   if (!error.isEmpty()) {
     return next(new HttpError("Enter valid input fields", 422));
   }
 
-  const placeId = req.params.placeId;
+  const _id = req.params.placeId;
   const { title, descrition } = req.body;
 
-  const updatePlace = { ...demoPlaces.find((p) => p.id === placeId) };
-  const placeIndex = demoPlaces.findIndex((p) => p.id === placeId);
+  const updatePlace = { title: title, descrition: descrition };
 
-  updatePlace.title = title;
-  updatePlace.descrition = descrition;
-
-  demoPlaces[placeIndex] = updatePlace;
+  try {
+    await Place.findByIdAndUpdate(_id, updatePlace, { new: false });
+  } catch (error) {
+    return next(new HttpError("Place can't be add, please try again!", 500));
+  }
 
   res.status(201).json({ message: "Update Sccuess" });
 };
@@ -153,7 +153,7 @@ const deletePlace = async (req, res, next) => {
     console.log(error);
   }
 
-  res.json({message: "Successfully deleted"});
+  res.json({ message: "Successfully deleted" });
 };
 
 exports.findPlaceById = findPlaceById;
