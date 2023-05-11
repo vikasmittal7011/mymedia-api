@@ -1,6 +1,15 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const connectToMongoose = require("./db");
 const port = 5000;
+
+connectToMongoose()
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((error) => {
+    console.error("Error connecting to MongoDB" + error);
+  });
 
 const placesRoutes = require("./routes/places-routes");
 const userRoutes = require("./routes/user-routes");
