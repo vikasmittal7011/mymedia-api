@@ -144,12 +144,16 @@ const updatePlace = (req, res, next) => {
   res.status(201).json({ message: "Update Sccuess" });
 };
 
-const deletePlace = (req, res, next) => {
-  const placeId = req.params.placeId;
+const deletePlace = async (req, res, next) => {
+  const _id = req.params.placeId;
 
-  demoPlaces = demoPlaces.filter((p) => p.id !== placeId);
+  try {
+    await Place.findByIdAndDelete({ _id });
+  } catch (error) {
+    console.log(error);
+  }
 
-  res.json(demoPlaces);
+  res.json({message: "Successfully deleted"});
 };
 
 exports.findPlaceById = findPlaceById;
