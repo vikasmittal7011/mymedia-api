@@ -68,30 +68,33 @@ const findPlace = async (req, res, next) => {
   res.json(allPlace);
 };
 
-const findPlaceById = (req, res, next) => {
-  let placeId = req.params.placeId;
-  let selectedPlace = demoPlaces.filter((place) => place.id === placeId);
+const findPlaceById = async (req, res, next) => {
+  let _id = req.params.placeId;
+  let findedPlace;
 
-  if (selectedPlace.length === 0) {
-    return next(
-      new HttpError("Place not found by place id that are you provide", 404)
-    );
+  try {
+    findedPlace = await Place.findById({ _id });
+  } catch (error) {
+    return next(new HttpError("Internal server error, try again!", 500));
   }
 
-  res.json(selectedPlace);
+  res.json(findedPlace);
 };
 
-const findPlacesByUserId = (req, res, next) => {
+const findPlacesByUserId = async (req, res, next) => {
   let userId = req.params.userId;
-  let selectedPlaces = demoPlaces.filter((place) => place.userID === userId);
+  let findedPlaces;
 
-  if (selectedPlaces.length === 0) {
-    return next(
-      new HttpError("Place not found by user id that are you provide", 404)
-    );
+  try {
+    findedPlaces = await Place.find({ userID: userId });
+    if (!findedPlaces || findedPlaces.length === 0) {
+      return next(new HttpError("Places not something is wrong", 404));
+    }
+  } catch (error) {
+    return next(new HttpError("Internal server error, try again!", 500));
   }
 
-  res.json(selectedPlaces);
+  res.json(findedPlaces);
 };
 
 const addNewPlace = async (req, res, next) => {
