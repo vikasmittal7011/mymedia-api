@@ -1,4 +1,5 @@
 const HttpError = require("../models/http-error");
+const { validationResult } = require("express-validator");
 
 let demoUserDetails = [
   {
@@ -32,6 +33,12 @@ const loginUser = (req, res, next) => {
 };
 
 const registerUser = (req, res, next) => {
+  const valid = validationResult(req);
+//   console.log(valid.);
+  if (!valid.isEmpty()) {
+    return next(new HttpError("Enter valid form details", 422));
+  }
+
   const { name, email, password } = req.body;
   const newUser = {
     name,
