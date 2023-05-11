@@ -1,5 +1,6 @@
 const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
+const Place = require("../models/place");
 
 let demoPlaces = [
   {
@@ -82,22 +83,29 @@ const findPlacesByUserId = (req, res, next) => {
   res.json(selectedPlaces);
 };
 
-const addNewPlace = (req, res, next) => {
+const addNewPlace = async (req, res, next) => {
   const error = validationResult(req);
   if (!error.isEmpty()) {
     return next(new HttpError("Enter valid input fields", 422));
   }
 
-  const { id, title, image, descrition, address, userID } = req.body;
+  const { title, image, descrition, address, userID } = req.body;
   const newPlace = {
-    id,
     title,
     image,
     descrition,
     address,
     userID,
   };
-  demoPlaces.push(newPlace);
+
+  const createPlace = Place(newPlace);
+
+  try {
+    await createPlace.save();
+  } catch (error) {
+    console.log(error);
+    return next(new HttpError("Place can't be add, please try again!", 500));
+  }
 
   res.status(201).json(newPlace);
 };

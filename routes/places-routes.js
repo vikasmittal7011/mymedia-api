@@ -13,7 +13,7 @@ router.post(
   "/",
   [
     check("title").not().isEmpty(),
-    check("description").isLength({ min: 8 }),
+    check("descrition").isLength({ min: 8 }),
     check("address").isLength("5"),
   ],
   placesController.addNewPlace
@@ -21,7 +21,7 @@ router.post(
 
 router.patch(
   "/:placeId",
-  [check("title").not().isEmpty(), check("description").isLength({ min: 8 })],
+  [check("title").not().isEmpty(), check("descrition").isLength({ min: 8 })],
   placesController.updatePlace
 );
 
