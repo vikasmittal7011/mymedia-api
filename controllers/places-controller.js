@@ -1,6 +1,6 @@
 const HttpError = require("../models/http-error");
 
-const demoPlaces = [
+let demoPlaces = [
   {
     id: "p1",
     title: "Red Fort",
@@ -68,17 +68,17 @@ const findPlaceById = (req, res, next) => {
   res.json(selectedPlace);
 };
 
-const findPlaceByUserId = (req, res, next) => {
+const findPlacesByUserId = (req, res, next) => {
   let userId = req.params.userId;
-  let selectedPlace = demoPlaces.filter((place) => place.userID === userId);
+  let selectedPlaces = demoPlaces.filter((place) => place.userID === userId);
 
-  if (selectedPlace.length === 0) {
+  if (selectedPlaces.length === 0) {
     return next(
       new HttpError("Place not found by user id that are you provide", 404)
     );
   }
 
-  res.json(selectedPlace);
+  res.json(selectedPlaces);
 };
 
 const addNewPlace = (req, res, next) => {
@@ -96,6 +96,31 @@ const addNewPlace = (req, res, next) => {
   res.status(201).json(newPlace);
 };
 
+const updatePlace = (req, res, next) => {
+  const placeId = req.params.placeId;
+  const { title, descrition } = req.body;
+
+  const updatePlace = { ...demoPlaces.find((p) => p.id === placeId) };
+  const placeIndex = demoPlaces.findIndex((p) => p.id === placeId);
+
+  updatePlace.title = title;
+  updatePlace.descrition = descrition;
+
+  demoPlaces[placeIndex] = updatePlace;
+
+  res.status(201).json({ message: "Update Sccuess" });
+};
+
+const deletePlace = (req, res, next) => {
+  const placeId = req.params.placeId;
+
+  demoPlaces = demoPlaces.filter((p) => p.id !== placeId);
+
+  res.json(demoPlaces);
+};
+
 exports.findPlaceById = findPlaceById;
-exports.findPlaceByUserId = findPlaceByUserId;
+exports.findPlacesByUserId = findPlacesByUserId;
 exports.addNewPlace = addNewPlace;
+exports.updatePlace = updatePlace;
+exports.deletePlace = deletePlace;
