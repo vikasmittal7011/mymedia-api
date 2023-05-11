@@ -81,5 +81,21 @@ const findPlaceByUserId = (req, res, next) => {
   res.json(selectedPlace);
 };
 
+const addNewPlace = (req, res, next) => {
+  const { id, title, image, descrition, address, userID } = req.body;
+  const newPlace = {
+    id,
+    title,
+    image,
+    descrition,
+    address,
+    userID,
+  };
+  demoPlaces.push(newPlace);
+
+  res.status(201).json(newPlace);
+};
+
 exports.findPlaceById = findPlaceById;
 exports.findPlaceByUserId = findPlaceByUserId;
+exports.addNewPlace = addNewPlace;
