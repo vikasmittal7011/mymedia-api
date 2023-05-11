@@ -1,5 +1,9 @@
 const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
+const User = require("../models/user");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const salt = 12;
 
 let demoUserDetails = [
   {
@@ -32,22 +36,34 @@ const loginUser = (req, res, next) => {
   res.json(validUser);
 };
 
-const registerUser = (req, res, next) => {
+const registerUser = async (req, res, next) => {
   const valid = validationResult(req);
-//   console.log(valid.);
   if (!valid.isEmpty()) {
     return next(new HttpError("Enter valid form details", 422));
   }
-
   const { name, email, password } = req.body;
-  const newUser = {
-    name,
-    email,
-    password,
-  };
-  demoUserDetails.push(newUser);
+  let user;
+  try {
+    user = await User.findOne({ email: email });
+    console.log(user);
+    if (user) {
+      return res
+        .status(400)
+        .json({ message: "This is email is already exsist in our database" });
+    }
 
-  res.status(200).json(newUser);
+    bcrypt.hash(password, salt).then(async (pass, err) => {
+      user = await User.create({
+        name,
+        email,
+        password: pass,
+      });
+    });
+  } catch (error) {
+    return next("Account is not created something is worng", 500);
+  }
+
+  res.status(200).json({message: "Account is created successfully "});
 };
 
 exports.getAllUserDetails = getAllUserDetails;
