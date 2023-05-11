@@ -9,6 +9,15 @@ const app = express();
 app.use("/api/places", placesRoutes);
 app.use("/api/users", userRoutes);
 
+app.use((error, req, res, next) => {
+  if (res.hearderSent) {
+    return next(error);
+  }
+  res
+    .status(error.code || 500)
+    .json({ message: error.message || "Unkown error accour" });
+});
+
 app.get("/", (req, res) => {
   res.send("Working");
 });
