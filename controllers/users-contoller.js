@@ -54,6 +54,7 @@ const registerUser = async (req, res, next) => {
     bcrypt.hash(password, salt).then(async (pass, err) => {
       user = await User.create({
         name,
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDJzEaxLN-jGRYYUO65pWu7Q9GXoNt4LUSSA&usqp=CAU",
         email,
         password: pass,
         places: [],
