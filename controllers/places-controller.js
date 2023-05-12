@@ -1,6 +1,8 @@
+const mongoose = require("mongoose");
 const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
 const Place = require("../models/place");
+const User = require("../models/user");
 
 const findPlace = async (req, res, next) => {
   let allPlace;
@@ -51,16 +53,35 @@ const addNewPlace = async (req, res, next) => {
   const { title, image, descrition, address, userID } = req.body;
   const newPlace = {
     title,
-    image,
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlCM-euuXjFDAYuueomg9TUyn_sAI6HIXW5Nn4iS1h6Hw9RDIZQbEou9qP25CEXBuCxbk&usqp=CAU",
     descrition,
     address,
     userID,
   };
 
+  let user;
+
+  try {
+    user = await User.findOne({ _id: userID });
+    if (!user) {
+      return next(
+        new HttpError("Not add place becase of user is not found", 404)
+      );
+    }
+  } catch (err) {
+    return next(new HttpError("Not add place, something is wrong", 500));
+  }
+
   const createPlace = Place(newPlace);
 
   try {
-    await createPlace.save();
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await createPlace.save({ session: sess });
+    user.places.push(createPlace);
+    await user.save({ session: sess });
+    await sess.commitTransaction();
   } catch (error) {
     console.log(error);
     return next(new HttpError("Place can't be add, please try again!", 500));
@@ -91,11 +112,27 @@ const updatePlace = async (req, res, next) => {
 
 const deletePlace = async (req, res, next) => {
   const _id = req.params.placeId;
+  let place;
+  try {
+    place = await Place.findById({ _id }).populate("userID");
+  } catch (error) {
+    return next(new HttpError("Internal server error at finding time", 500));
+  }
+
+  if (!place) {
+    return res.status(404).json({ message: "Place not found" });
+  }
 
   try {
-    await Place.findByIdAndDelete({ _id });
-  } catch (error) {
-    console.log(error);
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    place.deleteOne({ session: sess });
+    await place.userID.places.pull(place);
+    await place.userID.save({ session: sess });
+    sess.commitTransaction();
+  } catch (err) {
+    console.log(err);
+    return next(new HttpError("Internal server error at removing time", 500));
   }
 
   res.json({ message: "Successfully deleted" });
