@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const connectToMongoose = require("./db");
+const cors = require("cors");
 const port = 5000;
 
 connectToMongoose()
@@ -19,6 +20,7 @@ const HttpError = require("./models/http-error");
 const app = express();
 
 app.use(bodyParser.json());
+app.use(cors());
 
 app.use("/api/places", placesRoutes);
 app.use("/api/users", userRoutes);
