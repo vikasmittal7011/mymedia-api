@@ -5,21 +5,16 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const salt = 12;
 
-let demoUserDetails = [
-  {
-    name: "Vikas",
-    email: "vikas@gmail.com",
-    password: "123456",
-  },
-  {
-    name: "Aman",
-    email: "aman@gmail.com",
-    password: "987654",
-  },
-];
-
-const getAllUserDetails = (req, res, next) => {
-  res.json(demoUserDetails);
+const getAllUserDetails = async (req, res, next) => {
+  let users;
+  try {
+    users = await User.find({}, "-password");
+  } catch (error) {
+    return next(
+      new HttpError("Something is wrong, please try again later!!", 500)
+    );
+  }
+  res.json({ users });
 };
 
 const loginUser = async (req, res, next) => {
