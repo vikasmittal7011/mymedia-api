@@ -56,6 +56,7 @@ const registerUser = async (req, res, next) => {
         name,
         email,
         password: pass,
+        places: [],
       });
     });
   } catch (error) {

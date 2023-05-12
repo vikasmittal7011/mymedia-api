@@ -6,7 +6,7 @@ const placeSchema = new Schema({
   image: { type: String },
   descrition: { type: String, required: true },
   address: { type: String, required: true },
-  userID: { type: String, required: true },
+  userID: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
 });
 
 module.exports = mongoose.model("Place", placeSchema);
