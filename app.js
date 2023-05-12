@@ -2,6 +2,11 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const connectToMongoose = require("./db");
 const cors = require("cors");
+const corsOptions = {
+  origin: "*",
+  credentials: true, //access-control-allow-credentials:true
+  optionSuccessStatus: 200,
+};
 const port = 5000;
 
 connectToMongoose()
@@ -19,8 +24,15 @@ const HttpError = require("./models/http-error");
 
 const app = express();
 
-app.use(bodyParser.json());
-app.use(cors());
+app.use(bodyParser.json()); 
+app.use(cors(corsOptions));
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Headers", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PATCH");
+  next();
+});
 
 app.use("/api/places", placesRoutes);
 app.use("/api/users", userRoutes);
