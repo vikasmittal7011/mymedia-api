@@ -22,18 +22,22 @@ const getAllUserDetails = (req, res, next) => {
   res.json(demoUserDetails);
 };
 
-const loginUser = (req, res, next) => {
+const loginUser = async (req, res, next) => {
   const { email, password } = req.body;
 
-  const validUser = demoUserDetails.filter(
-    (user) => user.email === email && user.password === password
-  );
-
-  if (validUser.length === 0 || !validUser) {
-    next(new HttpError("Invalid details try again!!", 400));
+  let existingUser, comparePassword;
+  try {
+    existingUser = await User.findOne({ email: email });
+    comparePassword = await bcrypt.compare(password, existingUser.password);
+  } catch (error) {
+    console.log(error);
   }
 
-  res.json(validUser);
+  if (!comparePassword || !existingUser) {
+    return res.status(404).json({ messsage: "Enter valid details" });
+  }
+
+  res.status(200).json({ message: "Login success!!", existingUser });
 };
 
 const registerUser = async (req, res, next) => {
@@ -63,7 +67,7 @@ const registerUser = async (req, res, next) => {
     return next("Account is not created something is worng", 500);
   }
 
-  res.status(200).json({message: "Account is created successfully "});
+  res.status(200).json({ message: "Account is created successfully " });
 };
 
 exports.getAllUserDetails = getAllUserDetails;
