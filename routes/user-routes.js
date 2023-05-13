@@ -3,11 +3,11 @@ const { check } = require("express-validator");
 
 const router = express.Router();
 
-const userContoller = require("../controllers/users-contoller");
+const userController = require("../controllers/users-controller");
 
-router.get("/", userContoller.getAllUserDetails);
+router.get("/", userController.getAllUserDetails);
 
-router.post("/login", userContoller.loginUser);
+router.post("/login", userController.loginUser);
 
 router.post(
   "/register",
@@ -16,7 +16,7 @@ router.post(
     check("email").normalizeEmail().isEmail(),
     check("password").isLength({ min: 8 }),
   ],
-  userContoller.registerUser
+  userController.registerUser
 );
 
 module.exports = router;

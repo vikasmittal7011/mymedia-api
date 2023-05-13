@@ -43,9 +43,12 @@ const loginUser = async (req, res, next) => {
     });
   }
 
-  return res
-    .status(200)
-    .json({ success, message: "Login success!!", existingUser, status: 200 });
+  return res.status(200).json({
+    success: true,
+    message: "Login success!!",
+    existingUser,
+    status: 200,
+  });
 };
 
 const registerUser = async (req, res, next) => {
@@ -78,22 +81,18 @@ const registerUser = async (req, res, next) => {
       });
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        success,
-        message: "Account is not created something is worng",
-        status: 500,
-      });
+    return res.status(500).json({
+      success,
+      message: "Account is not created something is worng",
+      status: 500,
+    });
   }
 
-  return res
-    .status(200)
-    .json({
-      success: true,
-      message: "Account is created successfully",
-      status: 200,
-    });
+  return res.status(200).json({
+    success: true,
+    message: "Account is created successfully",
+    status: 200,
+  });
 };
 
 exports.getAllUserDetails = getAllUserDetails;
