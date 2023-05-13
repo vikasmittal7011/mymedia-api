@@ -16,7 +16,7 @@ router.post(
   [
     check("title").not().isEmpty(),
     check("descrition").isLength({ min: 8 }),
-    check("address").isLength("5"),
+    check("address").isLength({ min: 5 }),
   ],
   placesController.addNewPlace
 );
