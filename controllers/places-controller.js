@@ -35,13 +35,13 @@ const findPlacesByUserId = async (req, res, next) => {
   try {
     findedPlaces = await Place.find({ userID: userId });
     if (!findedPlaces || findedPlaces.length === 0) {
-      return next(new HttpError("Places not something is wrong", 404));
+      return next(new HttpError("Places not found something is wrong", 404));
     }
   } catch (error) {
     return next(new HttpError("Internal server error, try again!", 500));
   }
 
-  res.json(findedPlaces);
+  res.json({ success: true, findedPlaces }); 
 };
 
 const addNewPlace = async (req, res, next) => {
@@ -50,7 +50,7 @@ const addNewPlace = async (req, res, next) => {
     return next(new HttpError("Enter valid input fields", 422));
   }
 
-  const { title, image, descrition, address, userID } = req.body;
+  const { title, descrition, address, userID } = req.body;
   const newPlace = {
     title,
     image:
@@ -87,7 +87,7 @@ const addNewPlace = async (req, res, next) => {
     return next(new HttpError("Place can't be add, please try again!", 500));
   }
 
-  res.status(201).json(newPlace);
+  res.status(201).json({ success: true, newPlace });
 };
 
 const updatePlace = async (req, res, next) => {
@@ -107,7 +107,7 @@ const updatePlace = async (req, res, next) => {
     return next(new HttpError("Place can't be add, please try again!", 500));
   }
 
-  res.status(201).json({ message: "Update Sccuess" });
+  res.status(201).json({ success: true, message: "Update Sccuess" });
 };
 
 const deletePlace = async (req, res, next) => {
@@ -135,7 +135,7 @@ const deletePlace = async (req, res, next) => {
     return next(new HttpError("Internal server error at removing time", 500));
   }
 
-  res.json({ message: "Successfully deleted" });
+  res.json({ sucess: true, message: "Successfully deleted" });
 };
 
 exports.findPlaceById = findPlaceById;
