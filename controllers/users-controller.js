@@ -1,9 +1,11 @@
 const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const salt = 12;
 const success = false;
+const jwt_key = "donttrytohackmykeyforwrongwork";
 
 const getAllUserDetails = async (req, res, next) => {
   let users;
@@ -42,10 +44,26 @@ const loginUser = async (req, res, next) => {
     });
   }
 
+  let token;
+  try {
+    token = await jwt.sign(
+      { userid: existingUser._id, email: existingUser.email },
+      jwt_key,
+      { expiresIn: "1h" }
+    );
+  } catch (err) {
+    return res.status(500).json({
+      success,
+      message: "Internal server error, try again!",
+      status: 500,
+    });
+  }
+
   return res.status(200).json({
     success: true,
     message: "Login success!!",
     existingUser,
+    token: token,
     status: 200,
   });
 };
