@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const fs = require("fs");
 const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
 const Place = require("../models/place");
@@ -133,6 +134,10 @@ const deletePlace = async (req, res, next) => {
     console.log(err);
     return next(new HttpError("Internal server error at removing time", 500));
   }
+
+  fs.unlink(place.image, (err) => {
+    console.log(err);
+  });
 
   res.json({ sucess: true, message: "Successfully deleted" });
 };
