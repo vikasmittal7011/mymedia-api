@@ -14,9 +14,8 @@ const fileUpload = multer({
       cb(null, "upload/images/");
     },
     filename: (req, file, cb) => {
-      console.log(file);
       const ext = MIME_TYPE_MAP[file.mimetype];
-      cb(null, uuidv1() + "." + ext);
+      cb(null, uuidv1() + "-" + file.originalname);
     },
   }),
   fileFilter: (req, file, cb) => {

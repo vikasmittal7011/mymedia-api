@@ -41,7 +41,7 @@ const findPlacesByUserId = async (req, res, next) => {
     return next(new HttpError("Internal server error, try again!", 500));
   }
 
-  res.json({ success: true, findedPlaces }); 
+  res.json({ success: true, findedPlaces });
 };
 
 const addNewPlace = async (req, res, next) => {
@@ -53,8 +53,7 @@ const addNewPlace = async (req, res, next) => {
   const { title, descrition, address, userID } = req.body;
   const newPlace = {
     title,
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlCM-euuXjFDAYuueomg9TUyn_sAI6HIXW5Nn4iS1h6Hw9RDIZQbEou9qP25CEXBuCxbk&usqp=CAU",
+    image: req.file.path,
     descrition,
     address,
     userID,
