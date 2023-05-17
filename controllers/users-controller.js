@@ -54,38 +54,31 @@ const loginUser = async (req, res, next) => {
 const registerUser = async (req, res, next) => {
   const valid = validationResult(req);
   if (!valid.isEmpty()) {
-    return res
-      .status(422)
-      .json({ success, message: "Enter valid form details", status: 422 });
+    return next(new HttpError("Enter valid form details", 422));
   }
   const { name, email, password } = req.body;
   let user;
   try {
     user = await User.findOne({ email: email });
     if (user) {
-      return res.status(400).json({
-        success,
-        message: "This is email is already exsist in our database",
-        status: 400,
-      });
+      return next(
+        new HttpError("This is email is already exsist in our database", 400)
+      );
     }
 
     bcrypt.hash(password, salt).then(async (pass, err) => {
       user = await User.create({
         name,
-        image:
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDJzEaxLN-jGRYYUO65pWu7Q9GXoNt4LUSSA&usqp=CAU",
+        image: req.file.path,
         email,
         password: pass,
         places: [],
       });
     });
   } catch (error) {
-    return res.status(500).json({
-      success,
-      message: "Account is not created something is worng",
-      status: 500,
-    });
+    return next(
+      new HttpError("Account is not created something is worng", 500)
+    );
   }
 
   return res.status(200).json({

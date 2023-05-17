@@ -3,26 +3,26 @@ const { v1: uuidv1 } = require("uuid");
 
 const MIME_TYPE_MAP = {
   "image/png": "png",
-  "image/jpg": "jpg",
   "image/jpeg": "jpeg",
+  "image/jpg": "jpg",
 };
 
-console.log(uuidv1());
 const fileUpload = multer({
-  limits: 50000,
-  Storage: multer.diskStorage({
+  limits: 2022830,
+  storage: multer.diskStorage({
     destination: (req, file, cb) => {
-      cd(null, "upload/images");
+      cb(null, "upload/images/");
     },
     filename: (req, file, cb) => {
+      console.log(file);
       const ext = MIME_TYPE_MAP[file.mimetype];
-      cd(null, uuidv1() + "." + ext);
+      cb(null, uuidv1() + "." + ext);
     },
   }),
-  fileFilter: (req, file, cd) => {
+  fileFilter: (req, file, cb) => {
     const isValid = !!MIME_TYPE_MAP[file.mimetype];
-    const err = isValid ? null : new Error("Wrong min type!!");
-    cd(err, isValid);
+    const error = isValid ? null : new Error("Wrong file type!");
+    cb(error, isValid);
   },
 });
 
