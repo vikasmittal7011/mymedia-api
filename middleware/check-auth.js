@@ -7,12 +7,12 @@ module.exports = (req, res, next) => {
   }
   try {
     const token = req.headers.authorization.split(" ")[1];
-    console.log(token);
     if (!token) {
       throw new Error("Authentication Failed!!");
     }
     const tokenValue = jwt.verify(token, "donttrytohackmykeyforwrongwork");
-    // req.userData = { userId: tokenValue.userId };
+    console.log(tokenValue);
+    req.userData = { userId: tokenValue.userid };
     next();
   } catch (err) {
     console.log(err);

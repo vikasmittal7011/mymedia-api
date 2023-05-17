@@ -99,6 +99,23 @@ const updatePlace = async (req, res, next) => {
   const _id = req.params.placeId;
   const { title, descrition } = req.body;
 
+  let place;
+
+  try {
+    place = await Place.findById({ _id });
+    if (!place) {
+      return next(new HttpError("No place found, try again", 404));
+    }
+  } catch (err) {
+    return next(new HttpError("Place can't be add, please try again!", 500));
+  }
+
+  if (place.userID.toString() !== req.userData.userId) {
+    return next(
+      new HttpError("You are not right person to modify this content", 401)
+    );
+  }
+
   const updatePlace = { title: title, descrition: descrition };
 
   try {
@@ -122,22 +139,23 @@ const deletePlace = async (req, res, next) => {
   if (!place) {
     return res.status(404).json({ message: "Place not found" });
   }
-
-  try {
-    const sess = await mongoose.startSession();
-    sess.startTransaction();
-    place.deleteOne({ session: sess });
-    await place.userID.places.pull(place);
-    await place.userID.save({ session: sess });
-    sess.commitTransaction();
-  } catch (err) {
-    console.log(err);
-    return next(new HttpError("Internal server error at removing time", 500));
+  if (place.image) {
+    // fs.unlink(place.image, (err) => {
+    //   console.log(err);
+    // });
   }
 
-  fs.unlink(place.image, (err) => {
-    console.log(err);
-  });
+  // try {
+  //   const sess = await mongoose.startSession();
+  //   sess.startTransaction();
+  //   place.deleteOne({ session: sess });
+  //   await place.userID.places.pull(place);
+  //   await place.userID.save({ session: sess });
+  //   sess.commitTransaction();
+  // } catch (err) {
+  //   console.log(err);
+  //   return next(new HttpError("Internal server error at removing time", 500));
+  // }
 
   res.json({ sucess: true, message: "Successfully deleted" });
 };
