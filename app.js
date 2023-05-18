@@ -4,6 +4,7 @@ const fs = require("fs");
 const bodyParser = require("body-parser");
 const connectToMongoose = require("./db");
 const cors = require("cors");
+require('dotenv').config();
 const corsOptions = {
   origin: "*",
   credentials: true, //access-control-allow-credentials:true

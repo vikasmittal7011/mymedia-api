@@ -5,7 +5,7 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const salt = 12;
 const success = false;
-const jwt_key = "donttrytohackmykeyforwrongwork";
+const jwt_key = process.env.JWT_KEY;
 
 const getAllUserDetails = async (req, res, next) => {
   let users;
