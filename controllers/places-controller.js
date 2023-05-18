@@ -57,13 +57,12 @@ const addNewPlace = async (req, res, next) => {
     image: req.file.path,
     descrition,
     address,
-    userID,
+    userID: req.userData.userId,
   };
 
   let user;
-
   try {
-    user = await User.findOne({ _id: userID });
+    user = await User.findOne({ _id: req.userData.userId });
     if (!user) {
       return next(
         new HttpError("Not add place becase of user is not found", 404)
@@ -83,7 +82,6 @@ const addNewPlace = async (req, res, next) => {
     await user.save({ session: sess });
     await sess.commitTransaction();
   } catch (error) {
-    console.log(error);
     return next(new HttpError("Place can't be add, please try again!", 500));
   }
 
@@ -139,24 +137,27 @@ const deletePlace = async (req, res, next) => {
   if (!place) {
     return res.status(404).json({ message: "Place not found" });
   }
-  if (place.image) {
-    // fs.unlink(place.image, (err) => {
-    //   console.log(err);
-    // });
+
+  if (place.userID._id.toString() !== req.userData.userId) {
+    return next(
+      new HttpError("You are not right person to delete this content", 401)
+    );
   }
 
-  // try {
-  //   const sess = await mongoose.startSession();
-  //   sess.startTransaction();
-  //   place.deleteOne({ session: sess });
-  //   await place.userID.places.pull(place);
-  //   await place.userID.save({ session: sess });
-  //   sess.commitTransaction();
-  // } catch (err) {
-  //   console.log(err);
-  //   return next(new HttpError("Internal server error at removing time", 500));
-  // }
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    place.deleteOne({ session: sess });
+    await place.userID.places.pull(place);
+    await place.userID.save({ session: sess });
+    sess.commitTransaction();
+  } catch (err) {
+    return next(new HttpError("Internal server error at removing time", 500));
+  }
 
+  fs.unlink(place.image, (err) => {
+    console.log(err);
+  });
   res.json({ sucess: true, message: "Successfully deleted" });
 };
 
