@@ -49,6 +49,7 @@ app.get("/", (req, res) => {
     dbuser: process.env.Db_User,
     dbpass: process.env.Db_Password,
     dbname: process.env.Db_Name,
+    message: "Home route",
   });
 });
 
