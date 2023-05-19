@@ -4,7 +4,7 @@ const fs = require("fs");
 const bodyParser = require("body-parser");
 const connectToMongoose = require("./db");
 const cors = require("cors");
-require('dotenv').config();
+require("dotenv").config();
 const corsOptions = {
   origin: "*",
   credentials: true, //access-control-allow-credentials:true
@@ -57,9 +57,13 @@ app.use((error, req, res, next) => {
   if (res.hearderSent) {
     return next(error);
   }
-  res
-    .status(error.code || 500)
-    .json({ message: error.message || "Unkown error accour" });
+  res.status(error.code || 500).json({
+    message: error.message || "Unkown error accour",
+    dbuser: process.env.Db_User,
+    dbpass: process.env.Db_Password,
+    dbname: process.env.Db_Name,
+    key: JWT_KEY,
+  });
 });
 
 app.listen(port, () => {
