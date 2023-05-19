@@ -45,7 +45,13 @@ app.use("/api/places", placesRoutes);
 app.use("/api/users", userRoutes);
 
 app.use((req, res, next) => {
-  next(new HttpError("Route not fount", 404));
+  res.status(error.code || 500).json({
+    message: error.message || "Unkown error accour",
+    dbuser: process.env.Db_User,
+    dbpass: process.env.Db_Password,
+    dbname: process.env.Db_Name,
+    key: process.env.JWT_KEY,
+  });
 });
 
 app.use((error, req, res, next) => {
