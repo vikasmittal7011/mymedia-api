@@ -44,6 +44,14 @@ app.use((req, res, next) => {
 app.use("/api/places", placesRoutes);
 app.use("/api/users", userRoutes);
 
+app.get("/", (req, res) => {
+  res.json({
+    dbuser: process.env.Db_User,
+    dbpass: process.env.Db_Password,
+    dbname: process.env.Db_Name,
+  });
+});
+
 app.use((req, res, next) => {
   res.status(error.code || 500).json({
     message: error.message || "Unkown error accour",
