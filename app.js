@@ -62,7 +62,7 @@ app.use((error, req, res, next) => {
     dbuser: process.env.Db_User,
     dbpass: process.env.Db_Password,
     dbname: process.env.Db_Name,
-    key: JWT_KEY,
+    key: process.env.JWT_KEY,
   });
 });
 
