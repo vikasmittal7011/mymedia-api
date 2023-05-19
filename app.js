@@ -7,7 +7,7 @@ const cors = require("cors");
 require("dotenv").config();
 const corsOptions = {
   origin: "*",
-  credentials: true, //access-control-allow-credentials:true
+  credentials: true,
   optionSuccessStatus: 200,
 };
 const port = 5000;
@@ -44,23 +44,8 @@ app.use((req, res, next) => {
 app.use("/api/places", placesRoutes);
 app.use("/api/users", userRoutes);
 
-app.get("/", (req, res) => {
-  res.json({
-    dbuser: process.env.Db_User,
-    dbpass: process.env.Db_Password,
-    dbname: process.env.Db_Name,
-    message: "Home route",
-  });
-});
-
 app.use((req, res, next) => {
-  res.status(error.code || 500).json({
-    message: error.message || "Unkown error accour",
-    dbuser: process.env.Db_User,
-    dbpass: process.env.Db_Password,
-    dbname: process.env.Db_Name,
-    key: process.env.JWT_KEY,
-  });
+  next(new HttpError("Route not fount", 404));
 });
 
 app.use((error, req, res, next) => {
@@ -72,13 +57,9 @@ app.use((error, req, res, next) => {
   if (res.hearderSent) {
     return next(error);
   }
-  res.status(error.code || 500).json({
-    message: error.message || "Unkown error accour",
-    dbuser: process.env.Db_User,
-    dbpass: process.env.Db_Password,
-    dbname: process.env.Db_Name,
-    key: process.env.JWT_KEY,
-  });
+  res
+    .status(error.code || 500)
+    .json({ message: error.message || "Unkown error accour" });
 });
 
 app.listen(port, () => {
