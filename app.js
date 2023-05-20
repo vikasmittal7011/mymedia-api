@@ -62,6 +62,4 @@ app.use((error, req, res, next) => {
     .json({ message: error.message || "Unkown error accour" });
 });
 
-app.listen(port, () => {
-  console.log(`Server is running http://localhost:${port}`);
-});
+app.listen(process.env.POST || port);
