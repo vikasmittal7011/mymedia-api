@@ -45,7 +45,8 @@ app.use("/api/places", placesRoutes);
 app.use("/api/users", userRoutes);
 
 app.use((req, res, next) => {
-  next(new HttpError("Route not fount", 404));
+  res.redirect("https://mymedia-kfpt.onrender.com/");
+  // next(new HttpError("Route not fount", 404));
 });
 
 app.use((error, req, res, next) => {
