@@ -29,6 +29,7 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
+app.use(express.static(path.resolve(__dirname, "build")));
 app.use("/upload/images", express.static(path.join("upload", "images")));
 
 app.use((req, res, next) => {
@@ -45,8 +46,7 @@ app.use("/api/places", placesRoutes);
 app.use("/api/users", userRoutes);
 
 app.use((req, res, next) => {
-  res.redirect("https://mymedia-kfpt.onrender.com/");
-  // next(new HttpError("Route not fount", 404));
+  next(new HttpError("Route not fount", 404));
 });
 
 app.use((error, req, res, next) => {
@@ -61,6 +61,10 @@ app.use((error, req, res, next) => {
   res
     .status(error.code || 500)
     .json({ message: error.message || "Unkown error accour" });
+});
+
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve("build", "index.html"));
 });
 
 app.listen(process.env.POST || port);
